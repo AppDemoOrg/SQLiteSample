@@ -16,14 +16,21 @@ import com.abt.sqlite.bean.User;
 
 import java.util.ArrayList;
 
+/**
+ * @描述： @MainActivity
+ * @作者： @黄卫旗
+ * @创建时间： @2018/5/16
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private SQLiteDatabase db;
-    private EditText etUserName,etPassword;
+    private SQLiteDatabase sqLiteDatabase;
+    private EditText etUserName, etPassword;
     private ArrayList<User> alUser;
     //private ListView lvUser;
     //private UserAdapter adapter;
     private TextView tvPosition;
+    private TextView tvContent;
+    private StringBuilder mStringBuilder = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +43,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        DBHelper databaseHelper=new DBHelper(MainActivity.this);
-        db=null;
-        db=databaseHelper.getReadableDatabase();
+        DBHelper databaseHelper = new DBHelper(MainActivity.this);
+        sqLiteDatabase = null;
+        sqLiteDatabase = databaseHelper.getReadableDatabase();
 
-        etUserName=(EditText) findViewById(R.id.et_username);
-        etPassword=(EditText) findViewById(R.id.et_password);
-        //lvUser=(ListView) findViewById(R.id.lv_user);
+        tvContent  = (TextView) findViewById(R.id.content);
+        etUserName = (EditText) findViewById(R.id.et_username);
+        etPassword = (EditText) findViewById(R.id.et_password);
+        //lvUser = (ListView) findViewById(R.id.lv_user);
 
-        alUser=new ArrayList<>();
+        alUser = new ArrayList<>();
        /* adapter=new UserAdapter(this,alUser);
         lvUser.setAdapter(adapter);
         lvUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -56,40 +64,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        //新增
         findViewById(R.id.bt_insert).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (etUserName.getText().toString().isEmpty() || etPassword.getText().toString().isEmpty()) {
                     Toast.makeText(MainActivity.this,getString(R.string.can_not_be_empty),Toast.LENGTH_SHORT).show();
                 } else {
-                    String sql = "insert into user(username,password) values ('" + etUserName.getText().toString().trim() + "','" + etPassword.getText().toString().trim() + "')";
-                    db.execSQL(sql);
+                    String name = etUserName.getText().toString().trim();
+                    String passwd = etPassword.getText().toString().trim();
+                    String sql = "insert into user(username,password) values ('" + name + "','" + passwd + "')";
+                    sqLiteDatabase.execSQL(sql);
                     initData();
                 }
             }
         });
 
-        //删除
         findViewById(R.id.bt_delete).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String sql="delete from user where username='"+etUserName.getText().toString().trim()+"'";
-//                db.execSQL(sql);
-
+                /*String sql="delete from user where username='"+etUserName.getText().toString().trim()+"'";
+                sqLiteDatabase.execSQL(sql);*/
                 String whereClause="username=?";
                 String[] whereArgs={etUserName.getText().toString().trim()};
-                db.delete("user",whereClause,whereArgs);
+                sqLiteDatabase.delete("user",whereClause,whereArgs);
                 initData();
             }
         });
 
-        //修改
         findViewById(R.id.bt_update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String sql="update user set password='"+etPassword.getText().toString().trim()+"' where username='"+etUserName.getText().toString().trim()+"'";
-                db.execSQL(sql);
+                String name = etUserName.getText().toString().trim();
+                String passwd = etPassword.getText().toString().trim();
+                String sql="update user set password='"+passwd+"' where username='"+name+"'";
+                sqLiteDatabase.execSQL(sql);
                 initData();
             }
         });
@@ -97,13 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
     //查询
     private void initData() {
-        alUser.clear();
-        Cursor cursor = db.query("user",null,null,null,null,null,null);//查询并获得游标
-        while ((cursor.moveToNext())){
+        mStringBuilder.delete(0, mStringBuilder.length()); // 清空
+        alUser.clear(); // 查询并获得游标
+        Cursor cursor = sqLiteDatabase.query("user",null,null,null,null,null,null);
+        while ((cursor.moveToNext())) {
             User user=new User();
-            user.username=cursor.getString(cursor.getColumnIndex("username"));
-            user.password=cursor.getString(cursor.getColumnIndex("password"));
+            user.username = cursor.getString(cursor.getColumnIndex("username"));
+            user.password = cursor.getString(cursor.getColumnIndex("password"));
             alUser.add(user);
+            mStringBuilder.append("username="+user.username+", password="+user.password+"\n");
+            tvContent.setText(mStringBuilder.toString());
         }
         //adapter.notifyDataSetChanged();
         etUserName.setText("");
@@ -111,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
         etPassword.setText("");
     }
 
-    //隐藏软键盘
-    public void hideSoftKeyboard(){
+    // 隐藏软键盘
+    public void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 

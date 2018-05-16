@@ -10,11 +10,14 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @创建时间： @2018/5/16
  */
 public class DBHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "mydb.db"; //数据库名称
-    private static final int version = 1; //数据库版本
+
+    private static final String DB_NAME = "mydb.db"; // 数据库名称
+    private static final int version = 1; // 数据库版本
+
     public DBHelper(Context context) {
         super(context,DB_NAME,null,version);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "create table user(username varchar(20) not null , password varchar(60) not null );";
@@ -23,5 +26,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        ;
     }
 }
