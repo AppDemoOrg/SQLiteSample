@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SQLiteSample</string>
+    <string name="can_not_be_empty">can_not_be_empty</string>
+
+    <string name="insert">insert</string>
+    <string name="delete">delete</string>
+    <string name="update">update</string>
+
 </resources>
