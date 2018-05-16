@@ -101,6 +101,14 @@ public class MainActivity extends AppCompatActivity {
                 initData();
             }
         });
+
+        findViewById(R.id.bt_transaction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doTransaction();
+                initData();
+            }
+        });
     }
 
     //查询
@@ -125,6 +133,30 @@ public class MainActivity extends AppCompatActivity {
     // 隐藏软键盘
     public void hideSoftKeyboard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    public void doTransaction() {
+        DBHelper databaseHelper = new DBHelper(MainActivity.this);
+        sqLiteDatabase = null;
+        sqLiteDatabase = databaseHelper.getWritableDatabase();
+        // 开启事务
+        sqLiteDatabase.beginTransaction();
+        try {
+            String name = etUserName.getText().toString().trim();
+            String passwd = etPassword.getText().toString().trim();
+            String sql = "insert into user(username,password) values ('" + name + "','" + passwd + "')";
+            sqLiteDatabase.execSQL(sql);
+
+            passwd += "_append";
+            String sqlUpdate="update user set password='"+passwd+"' where username='"+name+"'";
+            sqLiteDatabase.execSQL(sqlUpdate);
+
+            // 设置事务标志为成功，当结束事务时就会提交事务
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            //结束事务
+            sqLiteDatabase.endTransaction();
+        }
     }
 
 }

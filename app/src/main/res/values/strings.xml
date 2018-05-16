@@ -5,5 +5,6 @@
     <string name="insert">insert</string>
     <string name="delete">delete</string>
     <string name="update">update</string>
+    <string name="transaction">事务</string>
 
 </resources>
