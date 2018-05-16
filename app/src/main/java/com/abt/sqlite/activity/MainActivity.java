@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase sqLiteDatabase;
     private EditText etUserName, etPassword;
     private ArrayList<User> alUser;
-    //private ListView lvUser;
-    //private UserAdapter adapter;
     private TextView tvPosition;
     private TextView tvContent;
     private StringBuilder mStringBuilder = new StringBuilder();
@@ -50,19 +48,7 @@ public class MainActivity extends AppCompatActivity {
         tvContent  = (TextView) findViewById(R.id.content);
         etUserName = (EditText) findViewById(R.id.et_username);
         etPassword = (EditText) findViewById(R.id.et_password);
-        //lvUser = (ListView) findViewById(R.id.lv_user);
-
         alUser = new ArrayList<>();
-       /* adapter=new UserAdapter(this,alUser);
-        lvUser.setAdapter(adapter);
-        lvUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                etUserName.setText(alUser.get(position).username);
-                etUserName.setSelection(etUserName.length());
-                etPassword.setText(alUser.get(position).password);
-            }
-        });*/
 
         findViewById(R.id.bt_insert).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //查询
     private void initData() {
         mStringBuilder.delete(0, mStringBuilder.length()); // 清空
         alUser.clear(); // 查询并获得游标
@@ -124,14 +109,12 @@ public class MainActivity extends AppCompatActivity {
             mStringBuilder.append("username="+user.username+", password="+user.password+"\n");
             tvContent.setText(mStringBuilder.toString());
         }
-        //adapter.notifyDataSetChanged();
         etUserName.setText("");
         etUserName.requestFocus();
         etPassword.setText("");
     }
 
-    // 隐藏软键盘
-    public void hideSoftKeyboard() {
+    public void hideSoftKeyboard() { // 隐藏软键盘
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
